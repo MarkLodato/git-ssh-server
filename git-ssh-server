@@ -6,16 +6,186 @@ use strict;
 use Getopt::Long;
 use Pod::Usage;
 
+# Configuration
+my $git = "/usr/local/bin/git";
 
-my $allowed_path = $ENV{'ALLOWED_PATH'};
-my $command = $ENV{'SSH_ORIGINAL_COMMAND'};
+my %available_commands = (
+    "help"              => \&help,
+    "create"            => \&create,
+    "delete"            => \&delete,
+    "rename"            => \&rename,
+    "git-upload-pack"   => \&git_upload_pack,
+    "git-receive-pack"  => \&git_receive_pack,
+);
 
-pod2usage(2) if @ARGV;  # no command-line arguments
+return main();
 
-print "allowed_path = '$allowed_path'\n";
-print "command = '$command'\n";
+sub main {
+    my ($help, $man) = (0, 0);
+
+    GetOptions(
+        'help' => \$help,
+        'man' => \$man,
+    );
+    if ($man) {
+        pod2usage(-verbose => 2);
+    }
+    if ($help) {
+        pod2usage(-verbose => 99,
+            -sections => "NAME|SYNOPSIS|DESCRIPTION|AVAILABLE COMMANDS");
+    }
+
+    return pod2usage(1) if @ARGV != 1;
+
+    my $allowed_path = $ARGV[0];
+    my $original_command = $ENV{'SSH_ORIGINAL_COMMAND'};
+
+    if (not defined $original_command) {
+        print STDERR "\$SSH_ORIGINAL_COMMAND must be set\n";
+    }
+
+    if ($original_command =~ /\s*/) {
+        return &help();
+    }
+
+    my @command = split /\s+/, $original_command;
+    my $cmd = shift @command;
+    @ARGV = @command;
+
+    my $routine = $available_commands{$cmd};
+    return $routine->() if defined $routine;
+    return &help();
+}
+
+sub help {
+    pod2usage(-verbose => 99, -sections => "AVAILABLE COMMANDS");
+}
+
+sub create {
+    die "create not implemented\n";
+}
+
+sub delete {
+    die "delete not implemented\n";
+}
+
+sub rename {
+    die "rename not implemented\n";
+}
+
+sub git_upload_pack {
+    die "git-upload-pack not implemented\n";
+}
+
+sub git_receive_pack {
+    die "git-receive-pack not implemented\n";
+}
 
 
 __END__
 
-TODO - man page
+=head1 NAME
+
+git-ssh-server - A more useful git-shell.
+
+=head1 SYNOPSIS
+
+git-ssh-server BASE_PATH
+
+git-ssh-server (--help | --man)
+
+=head1 DESCRIPTION
+
+Run commands from $SSH_ORIGINAL_COMMAND as a git restricted shell, allowing
+access only to the directories starting with BASE_PATH.
+
+This script is usually run automatically by ssh, as in:
+
+    ssh git@server create foo
+
+with a properly set up .ssh/authorized_keys file will run:
+
+    SSH_ORIGINAL_COMMAND='create foo' git-ssh-server /some/path
+
+The user will only be allowed to modify git repositories under /some/path.
+
+
+=head1 AVAILABLE COMMANDS
+
+=over 20
+
+=item create
+
+create a new repository
+
+=item delete
+
+delete an existing repository
+
+=item rename
+
+rename an existing repository
+
+=item help
+
+show this help message
+
+=item git-upload-pack
+
+called by "git fetch"
+
+=item git-receive-pack
+
+called by "git pull"
+
+=back
+
+Run `<command> --help' for more information on each command.
+
+
+=head1 CONFIGURATION
+
+The following directions were modified from
+http://eagain.net/blog/2007/03/22/howto-host-git.html
+
+=over 4
+
+=item 1
+
+Create a 'git' user.
+
+    sudo adduser \
+        --system \
+        --home /var/www/git \
+        --no-create-home \
+        --shell /bin/sh \
+        --gecos 'git version control' \
+        --group \
+        --disabled-password \
+        git
+
+=item 2
+
+Add an authorized_keys entry to ~git/.ssh/authorized_keys.  The following
+should be all on one line; there should be no whitespace at all where the
+linebreaks are.
+
+    command="/usr/local/bin/git-ssh-server /var/www/git/jdoe",no-p
+      ort-forwarding,no-X11-forwarding,no-agent-forwar
+      ding,no-pty ssh-rsa ... jdoe@example.com
+
+=back
+
+=head1 BUGS
+
+$SSH_ORIGINAL_COMMAND strips quotes and mashes all the arguments together, so
+if any argument has a space in it, it is parsed as a separate argument.
+Unless your path has a space in it, this is not a problem.  Otherwise, you
+have a problem.
+
+=head1 AUTHOR
+
+Mark Lodato <lodatom@gmail.com>
+
+
+
