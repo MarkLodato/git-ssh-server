@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+use Getopt::Long;
+use Pod::Usage;
+
+
+my $allowed_path = $ENV{'ALLOWED_PATH'};
+my $command = $ENV{'SSH_ORIGINAL_COMMAND'};
+
+pod2usage(2) if @ARGV;  # no command-line arguments
+
+print "allowed_path = '$allowed_path'\n";
+print "command = '$command'\n";
+
+
+__END__
+
+TODO - man page
