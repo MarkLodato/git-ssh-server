@@ -14,6 +14,7 @@ my %available_commands = (
     "create"            => \&create,
     "delete"            => \&delete,
     "rename"            => \&rename,
+    "list"              => \&list,
     "git-upload-pack"   => \&git_upload_pack,
     "git-receive-pack"  => \&git_receive_pack,
 );
@@ -73,6 +74,10 @@ sub rename {
     die "rename not implemented\n";
 }
 
+sub list {
+    die "list not implemented\n";
+}
+
 sub git_upload_pack {
     die "git-upload-pack not implemented\n";
 }
@@ -125,6 +130,10 @@ delete an existing repository
 =item rename
 
 rename an existing repository
+
+=item list
+
+list available repositories
 
 =item help
 
