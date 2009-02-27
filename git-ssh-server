@@ -38,7 +38,7 @@ sub main {
 
     return pod2usage(1) if @ARGV != 1;
 
-    my $allowed_path = $ARGV[0];
+    my $user = $ARGV[0];
     my $original_command = $ENV{'SSH_ORIGINAL_COMMAND'};
 
     if (not defined $original_command) {
@@ -95,14 +95,14 @@ git-ssh-server - A more useful git-shell.
 
 =head1 SYNOPSIS
 
-git-ssh-server BASE_PATH
+git-ssh-server user
 
 git-ssh-server (--help | --man)
 
 =head1 DESCRIPTION
 
 Run commands from $SSH_ORIGINAL_COMMAND as a git restricted shell, allowing
-access only to the directories starting with BASE_PATH.
+access only to the directories accessible by given user.
 
 This script is usually run automatically by ssh, as in:
 
@@ -110,9 +110,10 @@ This script is usually run automatically by ssh, as in:
 
 with a properly set up .ssh/authorized_keys file will run:
 
-    SSH_ORIGINAL_COMMAND='create foo' git-ssh-server /some/path
+    SSH_ORIGINAL_COMMAND='create foo' git-ssh-server jsmith
 
-The user will only be allowed to modify git repositories under /some/path.
+The user will only be allowed to modify git repositories under the path
+allocated to jsmith.
 
 
 =head1 AVAILABLE COMMANDS
@@ -165,7 +166,7 @@ Create a 'git' user.
 
     sudo adduser \
         --system \
-        --home /var/www/git \
+        --home /path/to/git/repos \
         --no-create-home \
         --shell /bin/sh \
         --gecos 'git version control' \
@@ -179,7 +180,7 @@ Add an authorized_keys entry to ~git/.ssh/authorized_keys.  The following
 should be all on one line; there should be no whitespace at all where the
 linebreaks are.
 
-    command="/usr/local/bin/git-ssh-server /var/www/git/jdoe",no-p
+    command="/path/to/git-ssh-server jdoe",no-p
       ort-forwarding,no-X11-forwarding,no-agent-forwar
       ding,no-pty ssh-rsa ... jdoe@example.com
 
