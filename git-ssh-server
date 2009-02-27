@@ -7,9 +7,12 @@ use Getopt::Long;
 use Pod::Usage;
 
 # Configuration
-my $git = "/usr/local/bin/git";
-my $repo_path = "/var/www/git";
+my $git = "/usr/local/bin/git";         # path to git executable
+my $base_path = "/var/www/git";         # home directory of 'git' user
+my $repo_path = "u";                    # directory containing all repos
 
+
+my $user;
 
 my %available_commands = (
     "help"              => \&help,
@@ -21,9 +24,11 @@ my %available_commands = (
     "git-receive-pack"  => \&git_receive_pack,
 );
 
-return main();
+exit main();
 
 sub main {
+    chdir $base_path;
+
     GetOptions(
         'help' => sub { pod2usage(-verbose => 2); },
         'man' => sub { pod2usage(-verbose => 99,
@@ -31,7 +36,7 @@ sub main {
     ) or pod2usage(1);
     return pod2usage(1) if @ARGV != 1;
 
-    my $user = $ARGV[0];
+    $user = $ARGV[0];
     my $original_command = $ENV{'SSH_ORIGINAL_COMMAND'};
 
     if (not defined $original_command) {
