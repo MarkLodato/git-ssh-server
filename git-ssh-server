@@ -24,20 +24,11 @@ my %available_commands = (
 return main();
 
 sub main {
-    my ($help, $man) = (0, 0);
-
     GetOptions(
-        'help' => \$help,
-        'man' => \$man,
-    );
-    if ($man) {
-        pod2usage(-verbose => 2);
-    }
-    if ($help) {
-        pod2usage(-verbose => 99,
-            -sections => "NAME|SYNOPSIS|DESCRIPTION|AVAILABLE COMMANDS");
-    }
-
+        'help' => sub { pod2usage(-verbose => 2); },
+        'man' => sub { pod2usage(-verbose => 99,
+            -sections => "NAME|SYNOPSIS|DESCRIPTION|AVAILABLE COMMANDS"); },
+    ) or pod2usage(1);
     return pod2usage(1) if @ARGV != 1;
 
     my $user = $ARGV[0];
