@@ -44,7 +44,7 @@ sub main {
         print STDERR "\$SSH_ORIGINAL_COMMAND must be set\n";
     }
 
-    if ($original_command =~ /\s*/) {
+    if ($original_command =~ /^\s*$/) {
         return &help();
     }
 
