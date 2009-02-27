@@ -42,7 +42,7 @@ sub main {
     my $original_command = $ENV{'SSH_ORIGINAL_COMMAND'};
 
     if (not defined $original_command) {
-        print STDERR "\$SSH_ORIGINAL_COMMAND must be set\n";
+        die "\$SSH_ORIGINAL_COMMAND must be set\n";
     }
 
     if ($original_command =~ /^\s*$/) {
