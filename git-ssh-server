@@ -73,7 +73,17 @@ sub rename {
 }
 
 sub list {
-    die "list not implemented\n";
+    my $type = $ARGV[0] || "mine";
+    if (@ARGV > 1 or ($type ne "all" and $type ne "mine")) {
+        die "usage: list [all|mine]\n";
+    }
+    if ($type eq "all") {
+        print join("\n", glob "$repo_path/*/*.git") . "\n";
+    }
+    else {
+        print join("\n", glob "$repo_path/$user/*.git") . "\n";
+    }
+    return 0;
 }
 
 sub git_upload_pack {
