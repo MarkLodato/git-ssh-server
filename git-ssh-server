@@ -55,7 +55,7 @@ sub main {
 
     my $routine = $available_commands{$cmd};
     return $routine->() if defined $routine;
-    return &help();
+    die "unknown command `$cmd'\n";
 }
 
 sub help {
