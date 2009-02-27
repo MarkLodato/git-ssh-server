@@ -8,6 +8,8 @@ use Pod::Usage;
 
 # Configuration
 my $git = "/usr/local/bin/git";
+my $repo_path = "/var/www/git";
+
 
 my %available_commands = (
     "help"              => \&help,
