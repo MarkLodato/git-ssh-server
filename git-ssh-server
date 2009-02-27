@@ -9,7 +9,6 @@ use Pod::Usage;
 # Configuration
 my $git = "/usr/local/bin/git";         # path to git executable
 my $base_path = "/var/www/git";         # home directory of 'git' user
-my $repo_path = "u";                    # directory containing all repos
 
 
 my $user;
@@ -69,7 +68,23 @@ sub delete {
 }
 
 sub rename {
-    die "rename not implemented\n";
+    my ($from_name, $to_name) = @ARGV;
+    if (@ARGV != 2) {
+        die "usage: rename from to\n";
+    }
+    my $from = repo_path_from_name($from_name);
+    my $to   = repo_path_from_name($to_name);
+    if ( not -e $from ) {
+        die "$from does not exist\n";
+    }
+    if ( -e $to ) {
+        die "$to already exists\n";
+    }
+    if (not rename($from, $to)) {
+        die "rename('$from','$to') failed\n";
+    }
+    print "sucessfully renamed '$from' to '$to'\n";
+    return 0;
 }
 
 sub list {
@@ -78,10 +93,10 @@ sub list {
         die "usage: list [all|mine]\n";
     }
     if ($type eq "all") {
-        print join("\n", glob "$repo_path/*/*.git") . "\n";
+        print join("\n", glob "u/*/*.git") . "\n";
     }
     else {
-        print join("\n", glob "$repo_path/$user/*.git") . "\n";
+        print join("\n", glob "u/$user/*.git") . "\n";
     }
     return 0;
 }
@@ -92,6 +107,21 @@ sub git_upload_pack {
 
 sub git_receive_pack {
     die "git-receive-pack not implemented\n";
+}
+
+
+sub validate_repo_name {
+    my ($name) = @_;
+    if ($name !~ /^[a-zA-Z0-9_-]+$/) {
+        die "invalid repository name: '$name'\nvalid characters: a-zA-Z0-9_-\n";
+    }
+    return 1;
+}
+
+sub repo_path_from_name {
+    my ($name) = @_;
+    validate_repo_name($name);
+    return "u/$user/$name.git";
 }
 
 
