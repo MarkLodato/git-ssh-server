@@ -7,6 +7,8 @@ use Getopt::Long;
 use Pod::Usage;
 use File::Path;
 use File::Basename;
+use DateTime;
+
 
 # Configuration
 my $git = "/usr/local/bin/git";         # path to git executable
@@ -20,6 +22,7 @@ my %available_commands = (
     "help"              => \&help,
     "create"            => \&create,
     "delete"            => \&delete,
+    "undelete"          => \&undelete,
     "rename"            => \&rename,
     "list"              => \&list,
     "git-upload-pack"   => \&git_upload_pack,
@@ -75,17 +78,18 @@ sub delete {
     if ( not -e $from ) {
         die "$from does not exist\n";
     }
-    if (not yes_no_prompt("Are you SURE you want to delete '$from'?")) {
-        print "Delete operation cancelled\n";
-        return 0;
-    }
-    my $to = "$deleted_path/$from." . time();
-    mkpath(basename($to));
+    my $now = DateTime->now;
+    my $to = "$deleted_path/$from." . $now->ymd('-') . '_' . $now->hms(':');
+    mkpath(dirname($to));
     if (not rename($from, $to)) {
         die "rename('$from','$to') failed\n";
     }
     print "sucessfully deleted '$from'\n";
     return 0;
+}
+
+sub undelete {
+    die "undelete not implemented\n";
 }
 
 sub rename {
@@ -154,18 +158,6 @@ sub repo_path_from_name {
 }
 
 
-sub yes_no_prompt {
-    my ($prompt) = @_;
-    print "$prompt (yes/no) ";
-    my $ans = lc <STDIN>;
-    until ($ans eq "yes" or $ans =~ /^n/) {
-        print "Please type \"yes\" or \"no\". ";
-        $ans = lc <STDIN>;
-    }
-    return $ans eq "yes";
-}
-
-
 __END__
 
 =head1 NAME
@@ -214,6 +206,10 @@ rename an existing repository
 =item delete
 
 delete an existing repository
+
+=item undelete
+
+undo a "delete" operation
 
 =item help
 
