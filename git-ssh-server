@@ -199,21 +199,21 @@ allocated to jsmith.
 
 =over 20
 
+=item list
+
+list available repositories
+
 =item create
 
 create a new repository
-
-=item delete
-
-delete an existing repository
 
 =item rename
 
 rename an existing repository
 
-=item list
+=item delete
 
-list available repositories
+delete an existing repository
 
 =item help
 
@@ -228,8 +228,6 @@ called by "git fetch"
 called by "git pull"
 
 =back
-
-Run `<command> --help' for more information on each command.
 
 
 =head1 CONFIGURATION
