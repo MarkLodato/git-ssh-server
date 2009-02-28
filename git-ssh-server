@@ -25,6 +25,7 @@ my %available_commands = (
     "undelete"          => \&undelete,
     "rename"            => \&rename,
     "list"              => \&list,
+    "git"               => \&git,
     "git-upload-pack"   => \&git_upload_pack,
     "git-receive-pack"  => \&git_receive_pack,
 );
@@ -130,6 +131,10 @@ sub list {
         print join("\n", @repos) . "\n";
     }
     return 0;
+}
+
+sub git {
+    die "git not implemented\n";
 }
 
 sub git_upload_pack {
