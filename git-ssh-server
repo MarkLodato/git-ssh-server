@@ -31,7 +31,6 @@ my %available_commands = (
     "rename"            => \&rename,
     "fork"              => \&fork,
     "list"              => \&list,
-    "find"              => \&find,
     "git"               => \&git,
     "git-upload-pack"   => \&git_upload_pack,
     "git-receive-pack"  => \&git_receive_pack,
@@ -155,52 +154,36 @@ sub fork {
 
 sub list {
     my @repos;
-    my $type = shift(@ARGV) || "mine";
-    my $valid = 0;
-    if (@ARGV > 0) {
-        die "usage: list [mine|all|deleted]\n";
-    }
+    my ($type, $regexp) = @ARGV;
+    my $glob;
+    my %types = (
+        all => "*/*.git",
+        mine => "$user/*.git",
+        deleted => "$deleted_path/$user/*.git.*",
+    );
     if (@ARGV == 0) {
-        $valid = 1;
-        if ($type eq "all") {
-            @repos = glob "*/*.git";
-            print "No repositories found.\n" if @repos == 0;
-        }
-        elsif ($type eq "mine") {
-            @repos = glob "$user/*.git";
-            print "You do not own any repositories.\n" if @repos == 0;
-        }
-        elsif ($type eq "deleted") {
-            my $oldcwd = getcwd;
-            chdir $deleted_path;
-            @repos = glob "$user/*.git.*";
-            print "You have no deleted repositories.\n" if @repos == 0;
-            chdir $oldcwd;
-        }
-        else {
-            $valid = 0;
+        $type = "all";
+    }
+    elsif (@ARGV == 1) {
+        if (not exists $types{$type}) {
+            $regexp = $type;
+            $type = "all";
         }
     }
-    if (not $valid) {
-        die "usage: list [mine|all|deleted]\n";
+    $glob = $types{$type};
+    if (@ARGV > 2 or not defined $glob) {
+        die "usage: list [mine|all|deleted] [<regexp>]\n";
     }
-    if (@repos > 0) {
-        print join("\n", @repos) . "\n";
+    @repos = glob $glob;
+    grep s/^$deleted_path//, @repos;
+    if ($regexp) {
+        @repos = grep /$regexp/, @repos;
     }
-    return 0;
-}
-
-sub find {
-    my $regexp = $ARGV[0];
-    if (@ARGV != 1) {
-        die "usage: find <regexp>\n";
-    }
-    my @repos = grep /$regexp/, glob "*/*.git";
-    if (@repos > 0) {
-        print join("\n", @repos) . "\n";
+    if (@repos == 0) {
+        print "No repositories found.\n";
     }
     else {
-        print "No repositories found matching $regexp\n";
+        print join("\n", @repos) . "\n";
     }
     return 0;
 }
@@ -306,15 +289,10 @@ contain lowercase letters, numbers, underscores, and dashes.
 
 =over
 
-=item list [mine|all|deleted]
+=item list [all|mine|deleted] [<regexp>]
 
-If argument is "mine" (default), list repositories owned by user.  If argument
-is "all", list all available repositories.  If argument is "deleted", list all
-repositories that have been deleted but are undelete-able.
-
-=item find <regexp>
-
-Find all repositories matching the given regular expression.
+List repositories (optionally matching Perl regexp).  If "mine", only match
+repositories owned by you; if "deleted", list repositories deleted by you.
 
 =item create <repo>
 
