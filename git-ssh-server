@@ -293,7 +293,7 @@ Find all repositories matching the given regular expression.
 
 =item create <repo>
 
-Create a new repository (not implemented).
+Create a new, empty repository.
 
 =item rename <from> <to>
 
