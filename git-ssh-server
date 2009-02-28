@@ -5,10 +5,13 @@ use strict;
 
 use Getopt::Long;
 use Pod::Usage;
+use File::Path;
+use File::Basename;
 
 # Configuration
 my $git = "/usr/local/bin/git";         # path to git executable
 my $base_path = "/var/www/git";         # home directory of 'git' user
+my $deleted_path = "/var/www/git-deleted";    # deleted archive
 
 
 my $user;
@@ -64,7 +67,25 @@ sub create {
 }
 
 sub delete {
-    die "delete not implemented\n";
+    my ($name) = @ARGV;
+    if (@ARGV != 1) {
+        die "usage: rename repo\n";
+    }
+    my $from = repo_path_from_name($name);
+    if ( not -e $from ) {
+        die "$from does not exist\n";
+    }
+    if (not yes_no_prompt("Are you SURE you want to delete '$from'?")) {
+        print "Delete operation cancelled\n";
+        return 0;
+    }
+    my $to = "$deleted_path/$from." . time();
+    mkpath(basename($to));
+    if (not rename($from, $to)) {
+        die "rename('$from','$to') failed\n";
+    }
+    print "sucessfully deleted '$from'\n";
+    return 0;
 }
 
 sub rename {
@@ -132,6 +153,17 @@ sub repo_path_from_name {
     }
 }
 
+
+sub yes_no_prompt {
+    my ($prompt) = @_;
+    print "$prompt (yes/no) ";
+    my $ans = lc <STDIN>;
+    until ($ans eq "yes" or $ans =~ /^n/) {
+        print "Please type \"yes\" or \"no\". ";
+        $ans = lc <STDIN>;
+    }
+    return $ans eq "yes";
+}
 
 
 __END__
