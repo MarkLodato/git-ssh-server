@@ -26,6 +26,7 @@ my %available_commands = (
     "undelete"          => \&undelete,
     "rename"            => \&rename,
     "list"              => \&list,
+    "find"              => \&find,
     "git"               => \&git,
     "git-upload-pack"   => \&git_upload_pack,
     "git-receive-pack"  => \&git_receive_pack,
@@ -145,6 +146,21 @@ sub list {
     return 0;
 }
 
+sub find {
+    my $regexp = $ARGV[0];
+    if (@ARGV != 1) {
+        die "usage: find <regexp>\n";
+    }
+    my @repos = grep /$regexp/, glob "*/*.git";
+    if (@repos > 0) {
+        print join("\n", @repos) . "\n";
+    }
+    else {
+        print "No repositories found matching $regexp\n";
+    }
+    return 0;
+}
+
 sub git {
     my $cmd = shift(@ARGV);
     if (defined $cmd) {
@@ -250,6 +266,10 @@ contain lowercase letters, numbers, underscores, and dashes.
 
 List available repositories owned by the user.  If "all" is given, list all
 repositories (even those not owned by the user).
+
+=item find <regexp>
+
+Find all repositories matching the given regular expression.
 
 =item create <repo>
 
