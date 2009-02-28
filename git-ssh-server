@@ -116,19 +116,22 @@ sub git_receive_pack {
 }
 
 
-sub validate_repo_name {
-    my ($name) = @_;
-    if ($name !~ /^[a-zA-Z0-9_-]+$/) {
-        die "invalid repository name: '$name'\nvalid characters: a-zA-Z0-9_-\n";
+sub repo_path_from_name {
+    my ($name, $read_allowed) = @_;
+    if ($name =~ m{^([a-z0-9_-]+)$}) {
+        return "$user/$1.git";
     }
-    return 1;
+    elsif ($name =~ m{^/?([a-z0-9_-]+)/([a-z0-9_-]+)(\.git)?/?}) {
+        unless ($read_allowed or $1 eq $user) {
+            die "you do not have permission to modify '$name'\n";
+        }
+        return "$1/$2.git";
+    }
+    else {
+        die "invalid repository name '$name' - valid characters: a-z0-9_-\n";
+    }
 }
 
-sub repo_path_from_name {
-    my ($name) = @_;
-    validate_repo_name($name);
-    return "u/$user/$name.git";
-}
 
 
 __END__
