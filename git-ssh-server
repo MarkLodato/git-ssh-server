@@ -136,7 +136,16 @@ sub list {
 }
 
 sub git {
-    die "git not implemented\n";
+    my $cmd = shift(@ARGV);
+    if (defined $cmd) {
+        if ($cmd eq "upload-pack") {
+            return &git_upload_pack();
+        }
+        if ($cmd eq "receive-pack") {
+            return &git_receive_pack();
+        }
+    }
+    die "usage: git (upload|receive)-pack repo\n";
 }
 
 sub git_upload_pack {
