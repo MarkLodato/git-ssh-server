@@ -149,7 +149,11 @@ sub git {
 }
 
 sub git_upload_pack {
-    die "git-upload-pack not implemented\n";
+    if (@ARGV != 1) {
+        die "usage: git upload-pack repo\n";
+    }
+    my $repo = repo_path_from_name($ARGV[0], 1);
+    return run($git, "upload-pack", "--strict", $repo);
 }
 
 sub git_receive_pack {
