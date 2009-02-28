@@ -157,7 +157,12 @@ sub git_upload_pack {
 }
 
 sub git_receive_pack {
-    die "git-receive-pack not implemented\n";
+    if (@ARGV != 1) {
+        die "usage: git receive-pack repo\n";
+    }
+    my $repo = repo_path_from_name($ARGV[0]);
+    return run($git, "receive-pack", $repo);
+    # TODO call git update-server-info?
 }
 
 
