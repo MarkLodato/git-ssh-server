@@ -150,6 +150,9 @@ sub git_receive_pack {
 
 sub repo_path_from_name {
     my ($name, $read_allowed) = @_;
+    if ($name =~ /^['"](.*)['"]$/) {
+        $name = $1;
+    }
     if ($name =~ m{^([a-z0-9_-]+)$}) {
         return "$user/$1.git";
     }
