@@ -319,6 +319,8 @@ Add a "clone" command?
 
 Add project (that is, non-user) directories?
 
+Call "git update-server-info" after a push?
+
 =head1 AUTHOR
 
 Mark Lodato <lodatom@gmail.com>
