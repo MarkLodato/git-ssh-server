@@ -7,6 +7,7 @@ use Getopt::Long;
 use Pod::Usage;
 use File::Path;
 use File::Basename;
+use File::Mirror;
 use DateTime;
 use Cwd;
 
@@ -25,6 +26,7 @@ my %available_commands = (
     "delete"            => \&delete,
     "undelete"          => \&undelete,
     "rename"            => \&rename,
+    "fork"              => \&fork,
     "list"              => \&list,
     "find"              => \&find,
     "git"               => \&git,
@@ -123,6 +125,24 @@ sub rename {
         die "rename('$from','$to') failed\n";
     }
     print "sucessfully renamed '$from' to '$to'\n";
+    return 0;
+}
+
+sub fork {
+    my ($from_name, $to_name) = @ARGV;
+    if (@ARGV != 2) {
+        die "usage: fork <from> <to>\n";
+    }
+    my $from = repo_path_from_name($from_name, 1);
+    my $to   = repo_path_from_name($to_name);
+    if ( not -e $from ) {
+        die "$from does not exist\n";
+    }
+    if ( -e $to ) {
+        die "$to already exists\n";
+    }
+    mirror($from, $to);
+    print "sucessfully forked '$from' to '$to'\n";
     return 0;
 }
 
@@ -278,6 +298,11 @@ Create a new repository (not implemented).
 =item rename <from> <to>
 
 Rename an existing repository.
+
+=item fork <from> <to>
+
+Fork (copy) an existing repository.  You may fork from any repo, but you may
+only fork to your user directory.
 
 =item delete <repo>
 
