@@ -92,11 +92,17 @@ sub list {
     if (@ARGV > 1 or ($type ne "all" and $type ne "mine")) {
         die "usage: list [all|mine]\n";
     }
+    my @repos;
     if ($type eq "all") {
-        print join("\n", glob "u/*/*.git") . "\n";
+        @repos = glob "*/*.git";
+        print "No repositories found.\n" if @repos == 0;
     }
     else {
-        print join("\n", glob "u/$user/*.git") . "\n";
+        @repos = glob "$user/*.git";
+        print "You do not own any repositories.\n" if @repos == 0;
+    }
+    if (@repos > 0) {
+        print join("\n", @repos) . "\n";
     }
     return 0;
 }
