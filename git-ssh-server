@@ -28,6 +28,8 @@ my %available_commands = (
     "git"               => \&git,
     "git-upload-pack"   => \&git_upload_pack,
     "git-receive-pack"  => \&git_receive_pack,
+    "upload-pack"       => \&git_upload_pack,
+    "receive-pack"      => \&git_receive_pack,
 );
 
 exit main();
