@@ -154,18 +154,35 @@ sub fork {
 }
 
 sub list {
-    my $type = $ARGV[0] || "mine";
-    if (@ARGV > 1 or ($type ne "all" and $type ne "mine")) {
-        die "usage: list [all]\n";
-    }
     my @repos;
-    if ($type eq "all") {
-        @repos = glob "*/*.git";
-        print "No repositories found.\n" if @repos == 0;
+    my $type = shift(@ARGV) || "mine";
+    my $valid = 0;
+    if (@ARGV > 0) {
+        die "usage: list [mine|all|deleted]\n";
     }
-    else {
-        @repos = glob "$user/*.git";
-        print "You do not own any repositories.\n" if @repos == 0;
+    if (@ARGV == 0) {
+        $valid = 1;
+        if ($type eq "all") {
+            @repos = glob "*/*.git";
+            print "No repositories found.\n" if @repos == 0;
+        }
+        elsif ($type eq "mine") {
+            @repos = glob "$user/*.git";
+            print "You do not own any repositories.\n" if @repos == 0;
+        }
+        elsif ($type eq "deleted") {
+            my $oldcwd = getcwd;
+            chdir $deleted_path;
+            @repos = glob "$user/*.git.*";
+            print "You have no deleted repositories.\n" if @repos == 0;
+            chdir $oldcwd;
+        }
+        else {
+            $valid = 0;
+        }
+    }
+    if (not $valid) {
+        die "usage: list [mine|all|deleted]\n";
     }
     if (@repos > 0) {
         print join("\n", @repos) . "\n";
@@ -289,10 +306,11 @@ contain lowercase letters, numbers, underscores, and dashes.
 
 =over
 
-=item list [all]
+=item list [mine|all|deleted]
 
-List available repositories owned by the user.  If "all" is given, list all
-repositories (even those not owned by the user).
+If argument is "mine" (default), list repositories owned by user.  If argument
+is "all", list all available repositories.  If argument is "deleted", list all
+repositories that have been deleted but are undelete-able.
 
 =item find <regexp>
 
