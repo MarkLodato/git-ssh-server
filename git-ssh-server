@@ -8,6 +8,7 @@ use Pod::Usage;
 use File::Path;
 use File::Basename;
 use DateTime;
+use Cwd;
 
 
 # Configuration
@@ -69,7 +70,16 @@ sub help {
 }
 
 sub create {
-    die "create not implemented\n";
+    if (@ARGV != 1) {
+        die "usage: create <repo>\n";
+    }
+    my $repo = repo_path_from_name($ARGV[0]);
+    my $oldcwd = getcwd;
+    mkpath($repo);
+    chdir($repo) or die "failed to chdir: $!\n";
+    run("git", "init", "--bare");
+    chdir $oldcwd;
+    return 0;
 }
 
 sub delete {
