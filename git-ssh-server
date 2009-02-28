@@ -221,7 +221,7 @@ called by "git fetch"
 
 =item git-receive-pack
 
-called by "git pull"
+called by "git push"
 
 =back
 
