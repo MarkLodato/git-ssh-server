@@ -10,15 +10,18 @@ use File::Basename;
 use File::Mirror;
 use DateTime;
 use Cwd;
+use Log::Trivial;
 
 
 # Configuration
 my $git = "/usr/local/bin/git";         # path to git executable
 my $base_path = "/var/www/git";         # home directory of 'git' user
 my $deleted_path = "/var/www/git-deleted";    # deleted archive
+my $log_filename = "/var/www/git/log";  # access log
 
 
 my $user;
+my $logger;
 
 my %available_commands = (
     "help"              => \&help,
@@ -60,6 +63,10 @@ sub main {
     }
 
     my @command = split /\s+/, $original_command;
+
+    $logger = Log::Trivial->new(log_file => $log_filename, log_tag => $user);
+    $logger->write(join ' ', @command);
+
     my $cmd = shift @command;
     @ARGV = @command;
 
