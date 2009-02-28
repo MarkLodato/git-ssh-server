@@ -229,39 +229,46 @@ allocated to jsmith.
 
 =head1 AVAILABLE COMMANDS
 
-=over 20
+In the following commands, <repo>, <from>, and <to> must be of the form
+"[userdir/]reponame[.git]".  If "userdir" is not given, it is taken to be the
+current user's directory.  The ".git" suffix is optional.
 
-=item list
+=over
 
-list available repositories
+=item list [all]
 
-=item create
+List available repositories owned by the user.  If "all" is given, list all
+repositories (even those not owned by the user).
 
-create a new repository
+=item create <repo>
 
-=item rename
+Create a new repository (not implemented).
 
-rename an existing repository
+=item rename <from> <to>
 
-=item delete
+Rename an existing repository.
 
-delete an existing repository
+=item delete <repo>
 
-=item undelete
+Delete an existing repository.  The repository is moved to the "deleted"
+directory, with the current timestamp appended, and can be restored using the
+"undelete" command.
 
-undo a "delete" operation
+=item undelete <repo>
+
+Undo a "delete" operation (not implemented).
 
 =item help
 
-show this help message
+Show available commands.
 
-=item git-upload-pack
+=item git-upload-pack <repo>
 
-called by "git fetch"
+Called by "git fetch".
 
-=item git-receive-pack
+=item git-receive-pack <repo>
 
-called by "git push"
+Called by "git push".
 
 =back
 
