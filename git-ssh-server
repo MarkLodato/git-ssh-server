@@ -136,11 +136,15 @@ sub rename {
 
 sub fork {
     my ($from_name, $to_name) = @ARGV;
-    if (@ARGV != 2) {
-        die "usage: fork <from> <to>\n";
+    if (@ARGV < 1 || @ARGV > 2) {
+        die "usage: fork <from> [<to>]\n";
     }
     my $from = repo_path_from_name($from_name, 'r');
-    my $to   = repo_path_from_name($to_name);
+    if (not $to_name) {
+        $from =~ m{/([^/]+)\.git$};
+        $to_name = $1;
+    }
+    my $to = repo_path_from_name($to_name);
     if ( not -e $from ) {
         die "$from does not exist\n";
     }
@@ -311,10 +315,11 @@ Create a new, empty repository.
 
 Rename an existing repository.
 
-=item fork <from> <to>
+=item fork <from> [<to>]
 
 Fork (copy) an existing repository.  You may fork from any repo, but you may
-only fork to your user directory.
+only fork to your user directory.  If `to' is not given, uses the same
+basename as `from'.
 
 =item delete <repo>
 
