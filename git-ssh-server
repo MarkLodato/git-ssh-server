@@ -168,6 +168,18 @@ sub repo_path_from_name {
 }
 
 
+sub run {
+    system(@_);
+    if ($? == -1) {
+        die "failed to execute: $!\n";
+    }
+    elsif ($? & 127) {
+        die "child died with signal " . ($? & 127) . "\n";
+    }
+    return $? >> 8;
+}
+
+
 __END__
 
 =head1 NAME
