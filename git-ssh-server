@@ -174,7 +174,7 @@ sub repo_path_from_name {
     if ($name =~ m{^([a-z0-9_-]+)(\.git)?$}) {
         return "$user/$1.git";
     }
-    elsif ($name =~ m{^/?([a-z0-9_-]+)/([a-z0-9_-]+)(\.git)?/?}) {
+    elsif ($name =~ m{^/?([a-z0-9_-]+)/([a-z0-9_-]+)(\.git)?/?$}) {
         unless ($read_allowed or $1 eq $user) {
             die "you do not have permission to modify '$name'\n";
         }
