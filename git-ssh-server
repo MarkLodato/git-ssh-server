@@ -181,7 +181,7 @@ sub repo_path_from_name {
         return "$1/$2.git";
     }
     else {
-        die "invalid repository name '$name' - valid characters: a-z0-9_-\n";
+        die "invalid repository name '$name'; run `help' for more info\n";
     }
 }
 
@@ -231,7 +231,8 @@ allocated to jsmith.
 
 In the following commands, <repo>, <from>, and <to> must be of the form
 "[userdir/]reponame[.git]".  If "userdir" is not given, it is taken to be the
-current user's directory.  The ".git" suffix is optional.
+current user's directory.  The ".git" suffix is optional.  "reponame" can only
+contain lowercase letters, numbers, underscores, and dashes.
 
 =over
 
