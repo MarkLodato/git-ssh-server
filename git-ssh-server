@@ -313,6 +313,12 @@ if any argument has a space in it, it is parsed as a separate argument.
 Unless your path has a space in it, this is not a problem.  Otherwise, you
 have a problem.
 
+=head1 TODO
+
+Add a "clone" command?
+
+Add project (that is, non-user) directories?
+
 =head1 AUTHOR
 
 Mark Lodato <lodatom@gmail.com>
