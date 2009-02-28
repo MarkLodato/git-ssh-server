@@ -75,7 +75,7 @@ sub create {
 sub delete {
     my ($name) = @ARGV;
     if (@ARGV != 1) {
-        die "usage: rename repo\n";
+        die "usage: rename <repo>\n";
     }
     my $from = repo_path_from_name($name);
     if ( not -e $from ) {
@@ -98,7 +98,7 @@ sub undelete {
 sub rename {
     my ($from_name, $to_name) = @ARGV;
     if (@ARGV != 2) {
-        die "usage: rename from to\n";
+        die "usage: rename <from> <to>\n";
     }
     my $from = repo_path_from_name($from_name);
     my $to   = repo_path_from_name($to_name);
@@ -118,7 +118,7 @@ sub rename {
 sub list {
     my $type = $ARGV[0] || "mine";
     if (@ARGV > 1 or ($type ne "all" and $type ne "mine")) {
-        die "usage: list [all|mine]\n";
+        die "usage: list [all]\n";
     }
     my @repos;
     if ($type eq "all") {
@@ -145,12 +145,12 @@ sub git {
             return &git_receive_pack();
         }
     }
-    die "usage: git (upload|receive)-pack repo\n";
+    die "usage: git (upload|receive)-pack <repo>\n";
 }
 
 sub git_upload_pack {
     if (@ARGV != 1) {
-        die "usage: git upload-pack repo\n";
+        die "usage: git upload-pack <repo>\n";
     }
     my $repo = repo_path_from_name($ARGV[0], 1);
     return run($git, "upload-pack", "--strict", $repo);
@@ -158,7 +158,7 @@ sub git_upload_pack {
 
 sub git_receive_pack {
     if (@ARGV != 1) {
-        die "usage: git receive-pack repo\n";
+        die "usage: git receive-pack <repo>\n";
     }
     my $repo = repo_path_from_name($ARGV[0]);
     return run($git, "receive-pack", $repo);
