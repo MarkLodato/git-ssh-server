@@ -139,7 +139,7 @@ sub fork {
     if (@ARGV != 2) {
         die "usage: fork <from> <to>\n";
     }
-    my $from = repo_path_from_name($from_name, 1);
+    my $from = repo_path_from_name($from_name, 'r');
     my $to   = repo_path_from_name($to_name);
     if ( not -e $from ) {
         die "$from does not exist\n";
@@ -205,7 +205,7 @@ sub git_upload_pack {
     if (@ARGV != 1) {
         die "usage: git upload-pack <repo>\n";
     }
-    my $repo = repo_path_from_name($ARGV[0], 1);
+    my $repo = repo_path_from_name($ARGV[0], 'r');
     return run($git, "upload-pack", "--strict", $repo);
 }
 
@@ -220,7 +220,16 @@ sub git_receive_pack {
 
 
 sub repo_path_from_name {
-    my ($name, $read_allowed) = @_;
+    my ($name, @options) = @_;
+    my $read_allowed = 0;
+    for (@options) {
+        if (/^(r|read|read_allowed)$/) {
+            $read_allowed = 1;
+        }
+        else {
+            die "unknown option \"$_\" to repo_path_from_name()\n";
+        }
+    }
     if ($name =~ /^['"](.*)['"]$/) {
         $name = $1;
     }
