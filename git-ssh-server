@@ -344,6 +344,9 @@ if any argument has a space in it, it is parsed as a separate argument.
 Unless your path has a space in it, this is not a problem.  Otherwise, you
 have a problem.
 
+There is no checking of lock files or anything, so if you delete a repository
+while someone is fetching, bad stuff may happen.
+
 =head1 TODO
 
 Add a "clone" command?
