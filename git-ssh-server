@@ -54,7 +54,12 @@ sub main {
     my $original_command = $ENV{'SSH_ORIGINAL_COMMAND'};
 
     if (not defined $original_command) {
-        die "\$SSH_ORIGINAL_COMMAND must be set\n";
+        if (exists $ENV{'SSH_CONNECTION'}) {
+            return &help();
+        }
+        else {
+            die "\$SSH_ORIGINAL_COMMAND must be set\n";
+        }
     }
 
     if ($original_command =~ /^\s*$/) {
@@ -430,7 +435,7 @@ where the linebreaks are.
 
     command="/path/to/git-ssh-server jdoe",no-p
       ort-forwarding,no-X11-forwarding,no-agent-forwar
-      ding,no-pty ssh-rsa ... jdoe@example.com
+      ding ssh-rsa ... jdoe@example.com
 
 =back
 
