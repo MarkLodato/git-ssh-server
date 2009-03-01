@@ -140,11 +140,13 @@ sub fork {
         die "usage: fork <from> [<to>]\n";
     }
     my $from = repo_path_from_name($from_name, 'r');
-    if (not $to_name) {
-        $from =~ m{/([^/]+)\.git$};
-        $to_name = $1;
+    my $to;
+    if ($to_name) {
+        $to = repo_path_from_name($to_name);
     }
-    my $to = repo_path_from_name($to_name);
+    else {
+        $to = repo_path_from_other_path($to_name);
+    }
     if ( not -e $from ) {
         die "$from does not exist\n";
     }
@@ -249,6 +251,12 @@ sub repo_path_from_name {
     else {
         die "invalid repository name '$name'; run `help' for more info\n";
     }
+}
+
+sub repo_path_from_other_path {
+    my ($other) = @_;
+    $other =~ m{/([^/]+)\.git};
+    return repo_path_from_name($1);
 }
 
 
