@@ -7,7 +7,6 @@ use Getopt::Long;
 use Pod::Usage;
 use File::Path;
 use File::Basename;
-use File::Mirror;
 use DateTime;
 use Cwd;
 use Log::Trivial;
@@ -193,7 +192,7 @@ sub fork {
     if ( -e $to ) {
         die "$to already exists\n";
     }
-    mirror($from, $to);
+    run('git', 'clone', '--bare', $from, $to);
     print "sucessfully forked '$from' to '$to'\n";
     return 0;
 }
