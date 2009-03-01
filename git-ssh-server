@@ -411,7 +411,7 @@ Create a 'git' user.
 
     sudo adduser \
         --system \
-        --home /path/to/git/repos \
+        --home /var/www/git \
         --no-create-home \
         --shell /bin/sh \
         --gecos 'git version control' \
