@@ -347,7 +347,10 @@ allocated to jsmith.
 
 =head1 AVAILABLE COMMANDS
 
-In the following commands, <repo>, <from>, and <to> must be of the form
+To use this server, run one of the following commands on the `ssh` command
+line.  For example: `ssh git@hostname list mine`.
+
+In the following descriptions, <repo>, <from>, and <to> must be of the form
 "[userdir/]reponame[.git]".  If "userdir" is not given, it is taken to be the
 current user's directory.  The ".git" suffix is optional.  "reponame" can only
 contain lowercase letters, numbers, underscores, and dashes.
