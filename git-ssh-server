@@ -76,7 +76,7 @@ sub main {
     chdir $base_path;
     my $routine = $available_commands{$cmd};
     return $routine->() if defined $routine;
-    die "unknown command `$cmd'\n";
+    die "unknown command `$cmd'; run `help' for more information\n";
 }
 
 sub help {
