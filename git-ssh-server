@@ -181,7 +181,7 @@ sub list {
         die "usage: list [mine|all|deleted] [<regexp>]\n";
     }
     @repos = glob $glob;
-    grep s/^$deleted_path//, @repos;
+    grep s{^$deleted_path/}{}, @repos;
     if ($regexp) {
         @repos = grep /$regexp/, @repos;
     }
