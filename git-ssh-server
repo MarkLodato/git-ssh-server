@@ -421,9 +421,9 @@ Create a 'git' user.
 
 =item 2
 
-Add an authorized_keys entry to ~git/.ssh/authorized_keys.  The following
-should be all on one line; there should be no whitespace at all where the
-linebreaks are.
+For each user, add an authorized_keys entry to ~git/.ssh/authorized_keys.  The
+following should be all on one line; there should be no whitespace at all
+where the linebreaks are.
 
     command="/path/to/git-ssh-server jdoe",no-p
       ort-forwarding,no-X11-forwarding,no-agent-forwar
