@@ -185,7 +185,7 @@ sub fork {
         $to = repo_path_from_name($to_name);
     }
     else {
-        $to = repo_path_from_other_path($to_name);
+        $to = repo_path_from_other_path($from);
     }
     if ( not -e $from ) {
         die "$from does not exist\n";
