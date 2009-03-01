@@ -355,7 +355,7 @@ In the following descriptions, <repo>, <from>, and <to> must be of the form
 current user's directory.  The ".git" suffix is optional.  "reponame" can only
 contain lowercase letters, numbers, underscores, and dashes.
 
-=over
+=over 25
 
 =item list [all|mine|deleted] [<regexp>]
 
