@@ -20,6 +20,7 @@ my $deleted_path = "/var/www/git-deleted";    # deleted archive
 my $log_filename = "/var/www/git/log";  # access log
 
 
+my $orig_dir = getcwd;
 my $user;
 my $logger;
 
@@ -41,8 +42,6 @@ my %available_commands = (
 exit main();
 
 sub main {
-    chdir $base_path;
-
     GetOptions(
         'help' => sub { pod2usage(-verbose => 2); },
         'man' => sub { pod2usage(-verbose => 99,
@@ -74,12 +73,14 @@ sub main {
     my $cmd = shift @command;
     @ARGV = @command;
 
+    chdir $base_path;
     my $routine = $available_commands{$cmd};
     return $routine->() if defined $routine;
     die "unknown command `$cmd'\n";
 }
 
 sub help {
+    chdir $orig_dir;
     pod2usage(-verbose => 99, -sections => "AVAILABLE COMMANDS");
 }
 
