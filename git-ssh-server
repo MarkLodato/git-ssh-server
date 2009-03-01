@@ -236,9 +236,7 @@ sub repo_path_from_name {
             die "unknown option \"$_\" to repo_path_from_name()\n";
         }
     }
-    if ($name =~ /^['"](.*)['"]$/) {
-        $name = $1;
-    }
+    $name =~ s/^['"](.*)['"]$/$1/;
     if ($name =~ m{^([a-z0-9_-]+)(\.git)?$}) {
         return "$user/$1.git";
     }
