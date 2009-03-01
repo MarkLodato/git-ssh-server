@@ -111,7 +111,41 @@ sub delete {
 }
 
 sub undelete {
-    die "undelete not implemented\n";
+    my ($from_name, $to_name) = @ARGV;
+    if (@ARGV < 1 || @ARGV > 2) {
+        die "usage: rename <repo> [<to>]\n";
+    }
+    my ($from, $to);
+    my $from_glob = deleted_repo_glob_from_name($from_name);
+    if ($to_name) {
+        $to = repo_path_from_name($to_name);
+    }
+    else {
+        $to = repo_path_from_other_path($from_glob);
+    }
+    my @from_possibilities = glob $from_glob;
+    if (@from_possibilities < 1) {
+        $from_glob =~ s[^$deleted_path/][];
+        die "No deleted repositories found matching $from_glob\n";
+    }
+    elsif (@from_possibilities > 1) {
+        grep {s[^$deleted_path/][]} @from_possibilities;
+        die "Multiple deleted repositories found:\n"
+            . join("\n",@from_possibilities) . "\n";
+    }
+    $from = $from_possibilities[0];
+    if ( not -e $from ) {
+        die "$from does not exist\n";
+    }
+    if ( -e $to ) {
+        die "$to already exists\n";
+    }
+    if (not rename($from, $to)) {
+        die "rename('$from','$to') failed\n";
+    }
+    $from =~ s[^$deleted_path/][];
+    print "sucessfully restored '$from' to '$to'\n";
+    return 0;
 }
 
 sub rename {
@@ -251,6 +285,18 @@ sub repo_path_from_name {
     }
 }
 
+sub deleted_repo_glob_from_name {
+    my ($name) = @_;
+    $name =~ s/^['"](.*)['"]$/$1/;
+    if ($name =~ m{^/?(?:$user/)?([a-z0-9_-]+)(?:\.git)?(\.[0-9_:-]+)?/?$}) {
+        my $date = $2 || "";
+        return "$deleted_path/$user/$1.git$date*";
+    }
+    else {
+        die "invalid repository name '$name'; run `help' for more info\n";
+    }
+}
+
 sub repo_path_from_other_path {
     my ($other) = @_;
     $other =~ m{/([^/]+)\.git};
@@ -335,7 +381,7 @@ directory, with the current timestamp appended, and can be restored using the
 
 =item undelete <repo>
 
-Undo a "delete" operation (not implemented).
+Undo a "delete" operation.
 
 =item help
 
