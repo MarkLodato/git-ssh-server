@@ -443,8 +443,6 @@ while someone is fetching, bad stuff may happen.
 
 =head1 TODO
 
-Add a "clone" command?
-
 Add project (that is, non-user) directories?
 
 Call "git update-server-info" after a push?
