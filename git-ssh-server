@@ -16,23 +16,6 @@
 #    along with this program (see COPYING).  If not, see
 #    <http://www.gnu.org/licenses/>.
 #
-# Clarifications to AGPL3:
-#
-#    This program is expressly designed to interact with users remotely
-#    through a computer network, namely through an SSH or other tunneled
-#    connection, and therefore the source code must be made available to all
-#    users of this program.  That is, even though the program is run as
-#    a local process through an SSH connection, rather than using a network
-#    socket, this use counts as "interacting with [the software] remotely
-#    through a computer network".
-#
-#    It is not required to distribute the source code of any Perl modules that
-#    are available through the Comprehensive Perl Archive Network (CPAN,
-#    http://www.cpan.org).  Additionally, it is not required to distribute
-#    any included scripts that are used solely for setting configuration
-#    variables, so long as the format of the included file is well documented
-#    and the configuration file is easily reproducable.
-#
 # If you would like to use this software under a different license, please
 # contact Mark Lodato at <lodatom@gmail.com>.
 
