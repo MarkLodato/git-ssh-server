@@ -92,6 +92,7 @@ class Backend (object):
         """Transform a path from the user to a path on disk.
         Raises InvalidPath if the path is not valid, and PermissionError if
         the user does not have permission for this path."""
+        path = path.strip('/')
         if len(path) > self.MAX_PATH_LEN:
             raise InvalidPath("Path is too long")
         m = self.valid_path_RE.match(path)
