@@ -86,11 +86,14 @@ class Backend (object):
     # Internal commands:
 
     valid_path_RE = re.compile(r'^u/(\w+)(/[a-zA-Z0-9_-]+)*\.git$')
+    MAX_PATH_LEN = 255
 
     def transform_path(self, path, existing=True):
         """Transform a path from the user to a path on disk.
         Raises InvalidPath if the path is not valid, and PermissionError if
         the user does not have permission for this path."""
+        if len(path) > self.MAX_PATH_LEN:
+            raise InvalidPath("Path is too long")
         m = self.valid_path_RE.match(path)
         if m is None:
             raise InvalidPath("Invalid path specification")
