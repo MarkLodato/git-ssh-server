@@ -337,9 +337,13 @@ class LockedAtomicFile (AtomicFile):
                 autobreak=autobreak)
         self.lock.acquire()
 
-        super(LockedAtomicFile,self).__init__(filename,
-                tmp_filename=tmp_filename, binary=binary,
-                autocommit=autocommit)
+        try:
+            super(LockedAtomicFile,self).__init__(filename,
+                    tmp_filename=tmp_filename, binary=binary,
+                    autocommit=autocommit)
+        except:
+            self.lock.release()
+            raise
 
 
     def close(self, commit=None):
