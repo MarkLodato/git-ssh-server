@@ -36,7 +36,8 @@ IN THE SOFTWARE.
 """
 
 
-import os, shutil
+import os as _os
+import shutil as _shutil
 
 
 class LockTimeoutError (RuntimeError):
@@ -95,10 +96,10 @@ class Lock (object):
         self.unique_basename = self.JOINER.join([
                 self.PREFIX,
                 gethostname(),
-                str(os.getpid()),
+                str(_os.getpid()),
                 nonce,
                 ])
-        self.unique = os.path.join(self.path, self.unique_basename)
+        self.unique = _os.path.join(self.path, self.unique_basename)
 
     def __del__(self):
         self.release()
@@ -124,7 +125,7 @@ class Lock (object):
 
         while True:
             try:
-                os.mkdir(self.path)
+                _os.mkdir(self.path)
             except OSError:
                 err = exc_info()[1]
                 if err.errno == EEXIST:
@@ -155,8 +156,8 @@ class Lock (object):
         """
         if not self.acquired():
             return
-        os.unlink(self.unique)
-        os.rmdir(self.path)
+        _os.unlink(self.unique)
+        _os.rmdir(self.path)
 
     def break_lock(self, force=False):
         """
@@ -167,20 +168,20 @@ class Lock (object):
         start with `self.PREFIX`.
         """
         if force:
-            shutil.rmtree(self.path)
+            _shutil.rmtree(self.path)
         else:
-            if os.path.exists(self.path):
-                for name in os.listdir(self.path):
+            if _os.path.exists(self.path):
+                for name in _os.listdir(self.path):
                     if not name.startswith(self.PREFIX):
                         raise UnlockError('non-lock file in lock directory: '
                                 + name)
-                    os.unlink(os.path.join(self.path, name))
-                os.rmdir(self.path)
+                    _os.unlink(_os.path.join(self.path, name))
+                _os.rmdir(self.path)
 
     def acquired(self):
         """Return True if the lock exists and was acquired by this instance,
         False otherwise."""
-        return os.path.exists(self.unique)
+        return _os.path.exists(self.unique)
 
     def __enter__(self):
         self.acquire()
@@ -240,7 +241,7 @@ class AtomicFile (object):
             binary = ""
 
         # Open the original file as input and the temporary file as output.
-        shutil.copy2(self.filename, self.tmp_filename)
+        _shutil.copy2(self.filename, self.tmp_filename)
         self.input = open(self.filename, "r" + binary)
         self.output = open(self.tmp_filename, "w" + binary)
 
@@ -292,12 +293,12 @@ class AtomicFile (object):
         self.input.close()
         if commit:
             self.output.flush()
-            os.fsync(self.output.fileno())
+            _os.fsync(self.output.fileno())
         self.output.close()
         if commit:
-            os.rename(self.tmp_filename, self.filename)
+            _os.rename(self.tmp_filename, self.filename)
         else:
-            os.remove(self.tmp_filename)
+            _os.remove(self.tmp_filename)
         self.closed = True
 
     def cancel(self):
@@ -346,10 +347,3 @@ class LockedAtomicFile (AtomicFile):
             return
         super(LockedAtomicFile,self).close(commit=commit)
         self.lock.release()
-
-
-# Clean up our namespace.
-del os, shutil
-
-
-
