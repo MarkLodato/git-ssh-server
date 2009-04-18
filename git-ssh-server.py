@@ -46,35 +46,6 @@ config = {
         }
 
 
-def confirm(prompt=None, default=False):
-    """Present a confirmation to the user on standard output."""
-
-    answers = {
-            'y' : True,
-            'yes' : True,
-            'n' : False,
-            'no' : False,
-            }
-
-    if prompt is None:
-        prompt = 'Confirm'
-
-    if default:
-        prompt += ' [Y/n] '
-    else:
-        prompt += ' [y/N] '
-
-    while True:
-        ans = raw_input(prompt).lower()
-        if not ans:
-            return default
-        try:
-            return answers[ans]
-        except KeyError:
-            print 'please enter y or n.'
-
-
-
 class Backend (object):
 
     def __init__(self, user, config):
@@ -167,6 +138,35 @@ class Frontend (object):
 
     def __init__(self, backend):
         self.backend = backend
+
+
+    @staticmethod
+    def _confirm(prompt=None, default=False):
+        """Present a confirmation to the user on standard output."""
+
+        answers = {
+                'y' : True,
+                'yes' : True,
+                'n' : False,
+                'no' : False,
+                }
+
+        if prompt is None:
+            prompt = 'Confirm'
+
+        if default:
+            prompt += ' [Y/n] '
+        else:
+            prompt += ' [y/N] '
+
+        while True:
+            ans = raw_input(prompt).lower()
+            if not ans:
+                return default
+            try:
+                return answers[ans]
+            except KeyError:
+                print 'please enter y or n.'
 
 
     def _format_help(self, f):
@@ -322,7 +322,7 @@ class Frontend (object):
 
         # is this necessary?
         print "Renaming a repository will break all clones."
-        if not confirm("Are you sure you wish to proceed?"):
+        if not self._confirm("Are you sure you wish to proceed?"):
             print "Operation cancelled"
             return 0
 
