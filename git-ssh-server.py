@@ -20,6 +20,7 @@
 # contact Mark Lodato at <lodatom-at-gmail>.
 
 from __future__ import with_statement
+__metaclass__ = type        # default to new-style classes
 
 import sys, os
 import textwrap
@@ -46,7 +47,7 @@ config = {
         }
 
 
-class Backend (object):
+class Backend:
 
     def __init__(self, user, config):
         self.user = user
@@ -134,7 +135,7 @@ class Backend (object):
 
 
 
-class Frontend (object):
+class Frontend:
 
     def __init__(self, backend):
         self.backend = backend
