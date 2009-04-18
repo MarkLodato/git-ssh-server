@@ -36,6 +36,9 @@ IN THE SOFTWARE.
 """
 
 
+__metaclass__ = type        # default to new-style classes
+
+
 import os as _os
 import shutil as _shutil
 
@@ -44,7 +47,7 @@ class LockTimeoutError (RuntimeError):
     """Called when Lock times out."""
 
 
-class Lock (object):
+class Lock:
     """
     A mkdir-based lock file.
 
@@ -191,7 +194,7 @@ class Lock (object):
         self.release()
 
 
-class AtomicFile (object):
+class AtomicFile:
     """
     A file update whose writes are atomic and safe from server crashes.
 
