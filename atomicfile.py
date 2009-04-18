@@ -257,7 +257,10 @@ class AtomicFile (object):
 
     def __del__(self):
         """Calls `cancel()`."""
-        self.cancel()
+        try:
+            self.cancel()
+        except AttributeError:
+            pass
 
     def __enter__(self):
         """Simply returns `self`."""
