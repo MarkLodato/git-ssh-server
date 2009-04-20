@@ -19,7 +19,8 @@
 # If you would like to use this software under a different license, please
 # contact Mark Lodato at <lodatom-at-gmail>.
 
-from __future__ import with_statement
+# Make Python 2 act like Python 3.
+from __future__ import with_statement, division
 __metaclass__ = type        # default to new-style classes
 
 import sys, os
