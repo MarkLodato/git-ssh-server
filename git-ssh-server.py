@@ -43,6 +43,7 @@ class PermissionError (Error): pass
 
 
 config = {
+        'project_dir' : '.config',
         'base_path' : './repos',
         'git'       : '/usr/local/bin/git',
         }
@@ -53,32 +54,86 @@ class Backend:
     def __init__(self, user, config):
         self.user = user
         self.base_path = config['base_path']
+        self.project_dir = config['project_dir']
         self.git_cmd = config['git']
 
 
     # Internal commands:
 
-    valid_path_RE = re.compile(r'^u/(\w+)(/[a-zA-Z0-9_-]+)*\.git$')
+    valid_prefix = '[upg]'
+    valid_name = '[a-zA-Z0-9_-]+'
+    valid_path_RE = re.compile(r'^(%(prefix)s)/(%(name)s)(/%(name)s)*\.git$'
+            % {'name' : valid_name, 'prefix' : valid_prefix})
     MAX_PATH_LEN = 255
 
-    def transform_path(self, path, existing=True):
+
+    def transform_path(self, path, existing=True, write=True):
         """Transform a path from the user to a path on disk.
-        Raises InvalidPath if the path is not valid, and PermissionError if
-        the user does not have permission for this path."""
+
+        Raises InvalidPath if the path is not valid, or if `existing` is True
+        and the path does not exist.
+
+        Raises PermissionError if the user does not have permission to perform
+        a write (if `write`, else read).
+
+        Returns (`realpath`, `prefix`, `base`), with `realpath` being the path
+        on disk, `prefix` being one of 'u' (user), 'g' (group), or 'p'
+        (project), and `base` being the leading path component (corresponding
+        to a user, group, or project.)
+        """
         path = path.strip('/')
         if len(path) > self.MAX_PATH_LEN:
             raise InvalidPath("Path is too long")
         m = self.valid_path_RE.match(path)
         if m is None:
             raise InvalidPath("Invalid path specification")
-        if m.group(1) != self.user:
-            raise PermissionError("Permission denied")
         realpath = os.path.join(self.base_path, path)
         if existing and not os.path.exists(realpath):
             raise InvalidPath("Repository '%s' does not exist" % path)
         if not existing and os.path.exists(realpath):
             raise InvalidPath("Repository '%s' already exists" % path)
+        prefix = m.group(1)
+        base = m.group(2)
+        if write:
+            operation = 'write'
+        else:
+            operation = 'read'
+        self.validate(realpath, operation, prefix, base)
         return realpath
+
+    def validate(self, realpath, operation, prefix, base):
+        """Validate that the user has permission to access the given path.
+
+        `operation` must be 'read' or 'write'.
+
+        Raises PermissionError if the user does not have permission to perform
+        `operation`.  Otherwise returns None.
+        """
+        # If the path has "/private/" in it, or if write access is requested,
+        # only allow owner(s) access.
+        if (operation != 'read') or ('/private/' in realpath):
+            if not self.is_member(prefix, base):
+                if operation == 'read':
+                    raise PermissionError('repository is private')
+                else:
+                    raise PermissionError('permission denied')
+
+    def is_member(self, prefix, base):
+        """Return True if the curent user is a member of the given base."""
+        if prefix == 'u':
+            return base == self.user
+        elif prefix == 'p':
+            return True
+        elif prefix == 'g':
+            membersfile = os.path.join(self.base_path, prefix, base,
+                    self.project_dir, 'members')
+            with open(membersfile, 'r') as f:
+                for line in f:
+                    if line.strip() == token:
+                        return True
+            return False
+        else:
+            raise ValueError("undefined prefix: `%s'" % prefix)
 
     def run(self, *command, **kwargs):
         return subprocess.call(command, **kwargs)
@@ -101,7 +156,7 @@ class Backend:
     # External commands:
 
     def git_upload_pack(self, path):
-        path = self.transform_path(path)
+        path = self.transform_path(path, write=False)
         return self.git("upload-pack", path)
 
 
@@ -118,7 +173,7 @@ class Backend:
 
 
     def fork(self, old, new):
-        old = self.transform_path(old)
+        old = self.transform_path(old, write=False)
         new = self.transform_path(new, existing=False)
         os.makedirs(new)
         # TODO --template
@@ -132,7 +187,15 @@ class Backend:
 
 
     def list(self, *args):
-        raise NotImplementedError()
+        # For now, just try listing all the .git directories
+        # TODO don't show /private/ repos?
+        # TODO add options for limiting?
+        out = []
+        for root, dirs, files in os.walk(self.base_path):
+            if root.endswith('.git'):
+                dirs[:] = []
+                out.append(root.lstrip(self.base_path))
+        return out
 
 
 
