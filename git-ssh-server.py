@@ -99,6 +99,8 @@ class Backend:
         else:
             operation = 'read'
         self.validate(realpath, operation, prefix, base)
+        if prefix == 'p' and '/private/' in path:
+            raise InvalidPath("Private directories not allowed in projects")
         return realpath
 
     def validate(self, realpath, operation, prefix, base):
