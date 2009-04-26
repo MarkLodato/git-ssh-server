@@ -53,9 +53,7 @@ class Backend:
 
     def __init__(self, user, config):
         self.user = user
-        self.base_path = config['base_path']
-        self.project_dir = config['project_dir']
-        self.git_cmd = config['git']
+        self.config = config
 
 
     # Internal commands:
@@ -87,7 +85,7 @@ class Backend:
         m = self.valid_path_RE.match(path)
         if m is None:
             raise InvalidPath("Invalid path specification")
-        realpath = os.path.join(self.base_path, path)
+        realpath = os.path.join(self.config['base_path'], path)
         if existing and not os.path.exists(realpath):
             raise InvalidPath("Repository '%s' does not exist" % path)
         if not existing and os.path.exists(realpath):
@@ -127,8 +125,8 @@ class Backend:
         elif prefix == 'p':
             return True
         elif prefix == 'g':
-            membersfile = os.path.join(self.base_path, prefix, base,
-                    self.project_dir, 'members')
+            membersfile = os.path.join(self.config['base_path'], prefix, base,
+                    self.config['project_dir'], 'members')
             with open(membersfile, 'r') as f:
                 for line in f:
                     if line.strip() == token:
@@ -152,7 +150,7 @@ class Backend:
                 args.insert(0, v)
             else:
                 args.append(v)
-        return self.run(self.git_cmd, *args)
+        return self.run(self.config['git'], *args)
 
 
     # External commands:
@@ -193,10 +191,11 @@ class Backend:
         # TODO don't show /private/ repos?
         # TODO add options for limiting?
         out = []
-        for root, dirs, files in os.walk(self.base_path):
+        base_path = self.config['base_path']
+        for root, dirs, files in os.walk(base_path):
             if root.endswith('.git'):
                 dirs[:] = []
-                out.append(root.lstrip(self.base_path))
+                out.append(root.lstrip(base_path))
         return out
 
 
