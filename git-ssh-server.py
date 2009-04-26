@@ -46,6 +46,7 @@ config = {
         'project_dir' : '.config',
         'base_path' : './repos',
         'git'       : '/usr/local/bin/git',
+        'template'  : './template',
         }
 
 
@@ -168,16 +169,16 @@ class Backend:
     def create(self, path):
         path = self.transform_path(path, existing=False)
         os.makedirs(path)
-        # TODO --template
-        return self.git("init", bare=True, quiet=True, git_dir=path)
+        return self.git("init", bare=True, quiet=True, git_dir=path,
+                template=self.config['template'])
 
 
     def fork(self, old, new):
         old = self.transform_path(old, write=False)
         new = self.transform_path(new, existing=False)
         os.makedirs(new)
-        # TODO --template
-        return self.git("clone", old, new, bare=True, quiet=True, mirror=True)
+        return self.git("clone", old, new, bare=True, quiet=True, mirror=True,
+                template=self.config['template'])
 
 
     def rename(self, old, new):
