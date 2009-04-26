@@ -179,7 +179,7 @@ class Backend:
         new = self.transform_path(new, existing=False)
         os.makedirs(new)
         # TODO --template
-        return self.git("clone", old, new, bare=True, quiet=True)
+        return self.git("clone", old, new, bare=True, quiet=True, mirror=True)
 
 
     def rename(self, old, new):
