@@ -50,8 +50,6 @@ In addition, there exist the following support files:
 
 .. _cgit: http://hjemli.net/git/cgit/
 
-atomicfile.py
-
 
 Manual Page for git_ssh_server.py
 =================================
