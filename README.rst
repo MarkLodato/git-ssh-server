@@ -19,8 +19,8 @@ will add this feature soon.
 .. _GitHub: http://www.github.com
 .. _Gitorious: http://www.gitorious.org
 
-Layout
-======
+Package Layout
+==============
 
 This package contains the following scripts:
 
