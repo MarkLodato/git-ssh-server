@@ -19,6 +19,86 @@ will add this feature soon.
 .. _GitHub: http://www.github.com
 .. _Gitorious: http://www.gitorious.org
 
+
+Repository Types
+================
+
+Repositories are broken into three types, which specify the permissions of the
+repository: *user*, *group*, and *public*.
+
+
+User Repositories
+-----------------
+
+User repositories are owned by a particular user and are of the following
+form::
+
+    u/owner.git
+
+That is, user repositories begin with "u/", followed by the username of the
+owner of the repository, and end with ".git".  The "u" denotes that it is a
+*user* repository (as opposed to *group* and *public*, below), and all
+repository paths end in ".git".
+
+Additionally, user repositories may be nested arbitrarily within
+subdirectories.  Examples::
+
+    u/owner/repo.git
+    u/owner/dir/repo.git
+    u/owner/dir/subdir/repo.git
+
+... and so on.  Anyone may read a user repository, but only the owner may
+write to one.  Also, only the owner may create, delete, or rename repositories
+within the owner's directory.
+
+There is one exception: any repositories located within a subdirectory named
+"private" are readable only by the owner.  For example, "u/mark/pub.git" will
+be readable by all, but "u/mark/private/secret.git" will be readable only by
+"mark".
+
+
+Group Repositories
+------------------
+
+Group repositories act just like user repositories, except the "owner" is a
+group of users, rather than a single user, and the prefix is "g/" instead of
+"u/".  Examples::
+
+    g/group.git
+    g/group/repo.git
+
+and so on.  Just like user repositories, anyone may read from group
+repositories (except those in a "private" subdirectory).  Any member of the
+group may write to, create, delete, and rename repositories within the group's
+directory.
+
+Unfortunately, group management is not yet implemented in the user interface.
+This will hopefully come soon.
+
+
+Public Repositories
+-------------------
+
+Public repositories follow the same naming scheme as user and group
+repositories, but begin with "p/".  Examples::
+
+    p/project.git
+    p/project/devel.git
+    p/project/subproject/foo.git
+
+Unlike user and group repositories, public repositories are not owned by
+anyone and, therefore, are readable and writable by all.  In the public name
+space, "private" directories are not allowed.
+
+Though there are no owners of public repositories, the second component of the
+path ("project" in the above examples) is suggested to be a project name.  In
+that way, related repositories can be grouped together.  We suggest having the
+"official" (or stable) repository be "p/project.git", while any development
+repositories or related side projects be within the "p/project/" directory
+structure.
+
+
+
 Package Layout
 ==============
 
