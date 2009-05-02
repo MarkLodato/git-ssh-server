@@ -128,10 +128,17 @@ class Backend:
         elif prefix == 'g':
             membersfile = os.path.join(self.config['base_path'], prefix, base,
                     self.config['project_dir'], 'members')
-            with open(membersfile, 'r') as f:
+            try:
+                f = open(membersfile, 'r')
+            except IOError:
+                # No such group
+                return False
+            try:
                 for line in f:
                     if line.strip() == token:
                         return True
+            finally:
+                f.close()
             return False
         else:
             raise ValueError("undefined prefix: `%s'" % prefix)
