@@ -105,11 +105,10 @@ Package Layout
 This package contains the following scripts:
 
 :file:`git_ssh_server.py`
-    This is the main "server" that interacts with users.  The manual page is
-    below.
+    The main "server" that interacts with users.  The manual page is below.
 
 :file:`generate_cgitrc.py`
-    This scans the repository directory and generates a configuration file
+    Scans the repository directory and generates a configuration file
     suitable for inclusion by cgit_.  Currently it is designed to be run as a
     cron job; in the future, I may incorporate this functionality directly
     into :file:`git_ssh_server.py`.
