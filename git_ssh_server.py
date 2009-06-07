@@ -480,6 +480,13 @@ class Frontend:
 
 
 def main(argv, cmd):
+    # Remove '-c', which is set if this script is the user's default shell.
+    argv = list(argv)
+    try:
+        argv.remove('-c')
+    except ValueError:
+        pass
+
     if len(argv) != 2 or not cmd:
         raise ArgumentError("USAGE: SSH_ORIGINAL_COMMAND='cmd' %s user"
                 % argv[0])
