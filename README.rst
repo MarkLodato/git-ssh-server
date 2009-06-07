@@ -113,6 +113,9 @@ This package contains the following scripts:
     cron job; in the future, I may incorporate this functionality directly
     into :file:`git_ssh_server.py`.
 
+:file:`authorized_keys_update.py`
+    A script/module for atomically updating the ~/.git/authorized_keys file.
+
 In addition, there exist the following support files:
 
 :file:`atomicfile.py`
