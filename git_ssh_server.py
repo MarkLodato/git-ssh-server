@@ -194,16 +194,16 @@ class Backend:
         os.rename(old, new)
 
 
-    def list(self, *args):
-        # For now, just try listing all the .git directories
+    def list(self, pattern=None):
         # TODO don't show /private/ repos?
-        # TODO add options for limiting?
+        r = re.compile(pattern) if pattern else None
         out = []
         base_path = self.config['base_path']
         for root, dirs, files in os.walk(base_path):
             if root.endswith('.git'):
                 dirs[:] = []
-                out.append(root.lstrip(base_path))
+                if r is None or r.search(root):
+                    out.append(root.lstrip(base_path))
         return out
 
 
@@ -340,12 +340,15 @@ class Frontend:
         """
         List available repositories.
 
-        USAGE: list <TODO>
+        USAGE: list [pattern]
 
-        TODO
+        List all available repositories.  If the regular expression `pattern`
+        is given, only return repositories that match.
         """
-        # TODO parse the arguments
-        repos = self.backend.list(*args)
+        if not 1 <= len(args) <= 2:
+            raise UsageError()
+        pattern = args[1] if len(args) >= 2 else None
+        repos = self.backend.list(pattern)
         if len(repos) == 0:
             print "No repositories found."
         else:
@@ -468,6 +471,8 @@ class Frontend:
             if msg:
                 print >>sys.stderr, "ERROR:", msg, "\n"
             print >>sys.stderr, usage
+        except re.error, e:
+            print >>sys.stderr, "ERROR: invalid pattern:", e
         except Error, e:
             print >>sys.stderr, "ERROR:", e
         except NotImplementedError, e:
