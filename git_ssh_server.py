@@ -97,12 +97,12 @@ class Backend:
             operation = 'write'
         else:
             operation = 'read'
-        self.validate(realpath, operation, prefix, base)
+        self.validate(path, operation, prefix, base)
         if prefix == 'p' and '/private/' in path:
             raise InvalidPath("Private directories not allowed in projects")
         return realpath
 
-    def validate(self, realpath, operation, prefix, base):
+    def validate(self, path, operation, prefix, base):
         """Validate that the user has permission to access the given path.
 
         `operation` must be 'read' or 'write'.
@@ -112,7 +112,7 @@ class Backend:
         """
         # If the path has "/private/" in it, or if write access is requested,
         # only allow owner(s) access.
-        if (operation != 'read') or ('/private/' in realpath):
+        if (operation != 'read') or ('/private/' in path):
             if not self.is_member(prefix, base):
                 if operation == 'read':
                     raise PermissionError('repository is private')
