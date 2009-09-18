@@ -194,16 +194,27 @@ class Backend:
         os.rename(old, new)
 
 
-    def list(self, pattern=None):
-        # TODO don't show /private/ repos?
+    def list(self, pattern=None, write=False, mine=False):
         r = re.compile(pattern) if pattern else None
         out = []
         base_path = self.config['base_path']
+        operation = 'write' if write or mine else 'read'
         for root, dirs, files in os.walk(base_path):
             if root.endswith('.git'):
                 dirs[:] = []
-                if r is None or r.search(root):
-                    out.append(root.lstrip(base_path))
+                path = root[len(base_path)+1:]
+                if r is not None and not r.search(path):
+                    continue
+                prefix, base = path.split('/')[:2]
+                if base.endswith('.git'):
+                    base = base[:-4]
+                if mine and prefix == 'p':
+                    continue
+                try:
+                    self.validate(path, operation, prefix, base)
+                except PermissionError:
+                    continue
+                out.append(path)
         return out
 
 
@@ -340,15 +351,41 @@ class Frontend:
         """
         List available repositories.
 
-        USAGE: list [pattern]
+        USAGE: list [--mine|--writable] [--] [pattern]
 
         List all available repositories.  If the regular expression `pattern`
         is given, only return repositories that match.
+
+        Options:
+            --writable  only list repositories you can write to
+            --mine      only list repositories you own
         """
-        if not 1 <= len(args) <= 2:
+        args.pop(0)
+        mine = write = False
+        pattern = None
+        if args:
+            o = args[0]
+            if o.startswith('-'):
+                if o == '--mine':
+                    mine = True
+                elif o == '--writable':
+                    write = True
+                elif o == '--':
+                    pass
+                else:
+                    raise UsageError()
+                args.pop(0)
+        if args:
+            o = args[0]
+            if o.startswith('-'):
+                if o != '--':
+                    raise UsageError()
+                args.pop(0)
+        if args:
+            pattern = args.pop(0)
+        if args:
             raise UsageError()
-        pattern = args[1] if len(args) >= 2 else None
-        repos = self.backend.list(pattern)
+        repos = self.backend.list(pattern=pattern, write=write, mine=mine)
         if len(repos) == 0:
             print "No repositories found."
         else:
