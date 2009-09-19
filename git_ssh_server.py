@@ -323,11 +323,12 @@ class Frontend:
 
     def git_upload_pack(self, args):
         """
-        Called by 'git-fetch-pack'.
+        Called automatically during a fetch.
 
         USAGE: git-upload-pack <directory>
 
-        See the man page for git-upload-pack.
+        Do not invoke directly.  See the man page for git-upload-pack for more
+        details.
         """
         if len(args) != 2:
             raise UsageError()
@@ -336,11 +337,12 @@ class Frontend:
 
     def git_receive_pack(self, args):
         """
-        Called by 'git-send-pack'.
+        Called automatically during a push.
 
         USAGE: git-receive-pack <directory>
 
-        See the man page for git-receive-pack.
+        Do not invoke directly.  See the man page for git-receive-pack for
+        more details.
         """
         if len(args) != 2:
             raise UsageError()
