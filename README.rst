@@ -254,6 +254,7 @@ Call ``git update-server-info`` after a push?
 Add a way of setting the project description for cgit/gitweb.
 
 Ideas for future commands:
+
 * show - display project info
 * cat - cat file of HEAD
 * ls - directory list of HEAD
