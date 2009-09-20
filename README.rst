@@ -178,8 +178,12 @@ line.  For example: ``ssh git@hostname list mine``.
     If *command* is given, print out the help for that command. Otherwise,
     list the available commands.
 
-**list**
-    List all available repositories.
+**list** [--mine\|--writable] [[--] *pattern*]
+    List all available repositories.  If the regular expression *pattern* is
+    given, only print repositories that match.  If ``--mine`` or
+    ``--writable`` are given, only print repostories owned by you or only
+    those that you can write to, respectively.  Use ``--`` if patterns starts
+    with a dash.
 
 **create** *path*
     Create a new repository located at *path*.  The path must end in ".git",
@@ -246,8 +250,6 @@ TODO
 ----
 
 Add group management stuff.
-
-Add options to the **list** command.
 
 Call ``git update-server-info`` after a push?
 
