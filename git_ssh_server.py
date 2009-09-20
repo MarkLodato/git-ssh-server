@@ -353,7 +353,7 @@ class Frontend:
         """
         List available repositories.
 
-        USAGE: list [--mine|--writable] [--] [pattern]
+        USAGE: list [--mine|--writable] [[--] pattern]
 
         List all available repositories.  If the regular expression `pattern`
         is given, only return repositories that match.
